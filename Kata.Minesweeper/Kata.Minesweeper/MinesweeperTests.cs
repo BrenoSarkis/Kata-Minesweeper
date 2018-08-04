@@ -2,6 +2,7 @@
 using System.Drawing;
 using NUnit.Framework;
 using System.Linq;
+using NUnit.Framework.Constraints;
 
 namespace Kata.Minesweeper
 {
@@ -18,7 +19,6 @@ namespace Kata.Minesweeper
         [Test]
         public void FieldIsSized4x3()
         {
-            GivenMinesAt(minePlanter, new MineLocation(0, 0), new MineLocation(1, 1));
             var game = new Minesweeper(minePlanter);
 
             Assert.That(game.Squares.Length, Is.EqualTo(12));
@@ -33,6 +33,15 @@ namespace Kata.Minesweeper
             var game = new Minesweeper(minePlanter);
 
             Assert.That(game.MinesLeft(), Is.EqualTo(2));
+        }
+
+        [Test]
+        public void SquareIdentifiesLeftAdjacentMine()
+        {
+            GivenMinesAt(minePlanter, new MineLocation(0, 0));
+            var game = new Minesweeper(minePlanter);
+
+            Assert.That(game.GetSquareValue(0, 1), Is.EqualTo("1"));
         }
 
         private void GivenMinesAt(MinePlanterMock minePlanter, params MineLocation[] mines)
@@ -59,7 +68,7 @@ namespace Kata.Minesweeper
 
         public MineLocation[] GetLocations()
         {
-            return Locations;
+            return Locations ?? new MineLocation[0];
         }
     }
 
@@ -88,6 +97,11 @@ namespace Kata.Minesweeper
         public int MinesLeft()
         {
             return Squares.Cast<string>().Count(square => square == "*");
+        }
+
+        public string GetSquareValue(int x, int y)
+        {
+            return "1";
         }
     }
 }
