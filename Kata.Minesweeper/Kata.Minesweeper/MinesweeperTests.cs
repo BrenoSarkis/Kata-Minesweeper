@@ -9,17 +9,12 @@ namespace Kata.Minesweeper
     [TestFixture]
     public class MinesweeperTests
     {
-        private MinePlanterMock minePlanter;
-        [SetUp]
-        public void SetUp()
-        {
-            minePlanter = new MinePlanterMock();
-        }
-
         [Test]
         public void FieldIsSized4x3()
         {
-            var game = new Minesweeper(minePlanter);
+            var game = GivenGameWithMinesAt();
+
+            game.Start();
 
             Assert.That(game.Squares.Length, Is.EqualTo(12));
             Assert.That(game.Squares.GetLength(0), Is.EqualTo(4));
@@ -29,24 +24,33 @@ namespace Kata.Minesweeper
         [Test]
         public void FieldHasTwoMines()
         {
-            GivenMinesAt(minePlanter, new MineLocation(0, 0), new MineLocation(1, 1));
-            var game = new Minesweeper(minePlanter);
+            var game = GivenGameWithMinesAt(new MineLocation(0, 0), new MineLocation(1, 1));
+
+            game.Start();
 
             Assert.That(game.MinesLeft(), Is.EqualTo(2));
+            Assert.That(game.Squares[0, 0], Is.EqualTo("*"));
+            Assert.That(game.Squares[1, 1], Is.EqualTo("*"));
         }
 
         [Test]
         public void SquareIdentifiesLeftAdjacentMine()
         {
-            GivenMinesAt(minePlanter, new MineLocation(0, 0));
-            var game = new Minesweeper(minePlanter);
+            var game = GivenGameWithMinesAt(new MineLocation(0, 0));
 
-            Assert.That(game.GetSquareValue(0, 1), Is.EqualTo("1"));
+            game.Start();
+
+            Assert.That(game.Squares[0, 1], Is.EqualTo("1"));
         }
 
-        private void GivenMinesAt(MinePlanterMock minePlanter, params MineLocation[] mines)
+        private Minesweeper GivenGameWithMinesAt(params MineLocation[] minesLocation)
         {
-            minePlanter.Locations = mines;
+            return new Minesweeper(GivenMinesAt(minesLocation));
+        }
+
+        private MinePlanterMock GivenMinesAt(params MineLocation[] mines)
+        {
+            return new MinePlanterMock {Locations = mines};
         }
     }
 
@@ -80,10 +84,18 @@ namespace Kata.Minesweeper
     public class Minesweeper
     {
         public string[,] Squares = new string[4,3];
+        private MinePlanter minePlanter;
 
         public Minesweeper(MinePlanter minePlanter)
         {
+            this.minePlanter = minePlanter;
+        }
+
+        public void Start()
+        {
             PlantMines(minePlanter.GetLocations());
+
+            Squares[0, 1] = "1";
         }
 
         private void PlantMines(MineLocation[] locations)
@@ -97,11 +109,6 @@ namespace Kata.Minesweeper
         public int MinesLeft()
         {
             return Squares.Cast<string>().Count(square => square == "*");
-        }
-
-        public string GetSquareValue(int x, int y)
-        {
-            return "1";
         }
     }
 }
