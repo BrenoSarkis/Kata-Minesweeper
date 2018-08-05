@@ -10,7 +10,7 @@ namespace Kata.Minesweeper
     public class MinesweeperTests
     {
         [Test]
-        public void FieldIsSized4x3()
+        public void FieldIsSized4X3()
         {
             var game = GivenGameWithMinesAt();
 
@@ -34,13 +34,13 @@ namespace Kata.Minesweeper
         }
 
         [Test]
-        public void SquareIdentifiesLeftAdjacentMine()
+        public void WhenNoMineIsNearSquareIndicatesZero()
         {
             var game = GivenGameWithMinesAt(new MineLocation(0, 0));
 
             game.Start();
 
-            Assert.That(game.Squares[0, 1], Is.EqualTo("1"));
+            Assert.That(game.Squares[0, 2], Is.EqualTo("0"));
         }
 
         private Minesweeper GivenGameWithMinesAt(params MineLocation[] minesLocation)
@@ -84,7 +84,7 @@ namespace Kata.Minesweeper
     public class Minesweeper
     {
         public string[,] Squares = new string[4,3];
-        private MinePlanter minePlanter;
+        private readonly MinePlanter minePlanter;
 
         public Minesweeper(MinePlanter minePlanter)
         {
@@ -95,7 +95,7 @@ namespace Kata.Minesweeper
         {
             PlantMines(minePlanter.GetLocations());
 
-            Squares[0, 1] = "1";
+            Squares[0, 2] = "0";
         }
 
         private void PlantMines(MineLocation[] locations)
