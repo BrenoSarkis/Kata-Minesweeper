@@ -43,6 +43,16 @@ namespace Kata.Minesweeper
             Assert.That(game.Squares[0, 2], Is.EqualTo("0"));
         }
 
+        [Test]
+        public void WhenTheresAnAdjacentMineSquareIndicatesOne()
+        {
+            var game = GivenGameWithMinesAt(new MineLocation(0, 0));
+
+            game.Start();
+
+            Assert.That(game.Squares[0, 1], Is.EqualTo("1"));
+        }
+
         private Minesweeper GivenGameWithMinesAt(params MineLocation[] minesLocation)
         {
             return new Minesweeper(GivenMinesAt(minesLocation));
@@ -93,9 +103,42 @@ namespace Kata.Minesweeper
 
         public void Start()
         {
-            PlantMines(minePlanter.GetLocations());
+            InitializeFieldWithZeroes();
 
-            Squares[0, 2] = "0";
+            var mineLocations = minePlanter.GetLocations();
+            PlantMines(mineLocations);
+
+            CalculateAdjacentMines(mineLocations);
+        }
+
+        private void CalculateAdjacentMines(MineLocation[] locations)
+        {
+            foreach (var mineLocation in locations)
+            {
+                for (int x = mineLocation.X - 1; x <= mineLocation.X + 1; x++)
+                {
+                    for (int y = mineLocation.Y - 1; y <= mineLocation.Y + 1; y++)
+                    {
+                        if (x >= 0 && y >= 0)
+                        {
+                            if (Squares[x, y] == "*") continue;
+
+                            Squares[x, y] = "1";
+                        }
+                    }
+                }
+            }
+        }
+
+        private void InitializeFieldWithZeroes()
+        {
+            for (int i = 0; i < Squares.GetLength(0); i++)
+            {
+                for (int j = 0; j < Squares.GetLength(1); j++)
+                {
+                    Squares[i, j] = "0";
+                }
+            }
         }
 
         private void PlantMines(MineLocation[] locations)
