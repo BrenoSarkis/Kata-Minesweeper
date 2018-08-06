@@ -53,6 +53,16 @@ namespace Kata.Minesweeper
             Assert.That(game.Squares[0, 1], Is.EqualTo("1"));
         }
 
+        [Test]
+        public void WhenTheresTwoAdjacentMineSquareIndicatesTwo()
+        {
+            var game = GivenGameWithMinesAt(new MineLocation(0, 0), new MineLocation(1, 0));
+
+            game.Start();
+
+            Assert.That(game.Squares[0, 1], Is.EqualTo("2"));
+        }
+
         private Minesweeper GivenGameWithMinesAt(params MineLocation[] minesLocation)
         {
             return new Minesweeper(GivenMinesAt(minesLocation));
@@ -123,7 +133,7 @@ namespace Kata.Minesweeper
                         {
                             if (Squares[x, y] == "*") continue;
 
-                            Squares[x, y] = "1";
+                            Squares[x, y] = (int.Parse(Squares[x, y]) + 1).ToString();
                         }
                     }
                 }
