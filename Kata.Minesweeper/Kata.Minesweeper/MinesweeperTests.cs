@@ -16,9 +16,9 @@ namespace Kata.Minesweeper
 
             game.Start();
 
-            Assert.That(game.Squares.Length, Is.EqualTo(12));
+            Assert.That(game.Squares.Length, Is.EqualTo(16));
             Assert.That(game.Squares.GetLength(0), Is.EqualTo(4));
-            Assert.That(game.Squares.GetLength(1), Is.EqualTo(3));
+            Assert.That(game.Squares.GetLength(1), Is.EqualTo(4));
         }
 
         [Test]
@@ -63,6 +63,16 @@ namespace Kata.Minesweeper
             Assert.That(game.Squares[0, 1], Is.EqualTo("2"));
         }
 
+        [Test]
+        public void CalculatesFullField()
+        {
+            var game = GivenGameWithMinesAt(new MineLocation(0, 0), new MineLocation(2, 1));
+
+            game.Start();
+
+            StringAssert.AreEqualIgnoringCase(@"* 1 0 0 2 2 1 0 1 * 1 0 1 1 1 0 ", game.PrintField());
+        }                                                                    
+
         private Minesweeper GivenGameWithMinesAt(params MineLocation[] minesLocation)
         {
             return new Minesweeper(GivenMinesAt(minesLocation));
@@ -70,7 +80,7 @@ namespace Kata.Minesweeper
 
         private MinePlanterMock GivenMinesAt(params MineLocation[] mines)
         {
-            return new MinePlanterMock {Locations = mines};
+            return new MinePlanterMock { Locations = mines };
         }
     }
 
@@ -103,7 +113,7 @@ namespace Kata.Minesweeper
 
     public class Minesweeper
     {
-        public string[,] Squares = new string[4,3];
+        public string[,] Squares = new string[4, 4];
         private readonly MinePlanter minePlanter;
 
         public Minesweeper(MinePlanter minePlanter)
@@ -133,11 +143,16 @@ namespace Kata.Minesweeper
                         {
                             if (Squares[x, y] == "*") continue;
 
-                            Squares[x, y] = (int.Parse(Squares[x, y]) + 1).ToString();
+                            IncreaseNearbyMineCount(x, y);
                         }
                     }
                 }
             }
+        }
+
+        private void IncreaseNearbyMineCount(int x, int y)
+        {
+            Squares[x, y] = (int.Parse(Squares[x, y]) + 1).ToString();
         }
 
         private void InitializeFieldWithZeroes()
@@ -162,6 +177,23 @@ namespace Kata.Minesweeper
         public int MinesLeft()
         {
             return Squares.Cast<string>().Count(square => square == "*");
+        }
+
+        public string PrintField()
+        {
+            int x = Squares.GetLength(0);
+            int y = Squares.GetLength(1);
+            string field = "";
+            for (int i = 0; i < x; i++)
+            {
+                for (int j = 0; j < y; j++)
+                {
+                    field += string.Format("{0} ", Squares[i, j]);
+                }
+                //field += System.Environment.NewLine;
+            }
+
+            return field;
         }
     }
 }
