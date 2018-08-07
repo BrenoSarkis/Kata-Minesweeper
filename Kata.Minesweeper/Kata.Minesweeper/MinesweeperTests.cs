@@ -70,8 +70,11 @@ namespace Kata.Minesweeper
 
             game.Start();
 
-            StringAssert.AreEqualIgnoringCase(@"* 1 0 0 2 2 1 0 1 * 1 0 1 1 1 0 ", game.PrintField());
-        }                                                                    
+            StringAssert.AreEqualIgnoringCase("* 1 0 0 \r\n" +
+                                              "2 2 1 0 \r\n" +
+                                              "1 * 1 0 \r\n" +
+                                              "1 1 1 0 \r\n", game.PrintField());
+        }
 
         private Minesweeper GivenGameWithMinesAt(params MineLocation[] minesLocation)
         {
@@ -181,16 +184,16 @@ namespace Kata.Minesweeper
 
         public string PrintField()
         {
-            int x = Squares.GetLength(0);
-            int y = Squares.GetLength(1);
             string field = "";
-            for (int i = 0; i < x; i++)
+
+            for (int i = 0; i < Squares.GetLength(0); i++)
             {
-                for (int j = 0; j < y; j++)
+                for (int j = 0; j < Squares.GetLength(1); j++)
                 {
                     field += string.Format("{0} ", Squares[i, j]);
                 }
-                //field += System.Environment.NewLine;
+
+                field += "\r\n";
             }
 
             return field;
