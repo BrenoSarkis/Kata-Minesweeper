@@ -1,17 +1,24 @@
 # Kata-Minesweeper
 
-Problem Description
+<pre><code>A field of N x M squares is represented by N lines of
+exactly M characters each. The character '*' represents
+a mine and the character '.' represents no-mine.
 
-Have you ever played Minesweeper? It’s a cute little game which comes within a certain Operating System whose name we can’t really remember. Well, the goal of the game is to find all the mines within an MxN field. To help you, the game shows a number in a square which tells you how many mines there are adjacent to that square. For instance, take the following 4x4 field with 2 mines (which are represented by an * character):
+Example input (a 4 x 3 mine-field of 12 squares, 2 of
+which are mines)
 
+4 3
 *...
-....
-.*..
+..*.
 ....
 
-The same field including the hint numbers described above would look like this:
+Your task is to write a program to accept this input and
+produce as output a hint-field of identical dimensions
+where each square is a * for a mine or the number of
+adjacent mine-squares if the square does not contain a mine.
 
-*100
-2210
-1*10
-1110
+Example output (for the above input)
+*211
+12*1
+0111
+</code></pre>
