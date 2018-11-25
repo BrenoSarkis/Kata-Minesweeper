@@ -195,7 +195,6 @@ namespace Kata.Minesweeper
 
                 field += "\r\n";
             }
-
             return field;
         }
     }
